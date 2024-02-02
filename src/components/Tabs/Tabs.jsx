@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import styles from './Tabs.module.scss';
 import cx from 'classnames';
+import Crypto from '../Crypto';
+import Forex from '../Forex';
 
 function Tabs() {
     const [selectedTab, setSelectedTab] = useState('crypto');
@@ -18,8 +20,8 @@ function Tabs() {
                 >Forex</li>
             </ul>
         <div className={styles.content}>
-            {selectedTab === 'crypto' && <h1>CRYPTO</h1>}
-            {selectedTab === 'forex' && <h1>FOREX</h1>}
+            {selectedTab === 'crypto' && <Crypto/>}
+            {selectedTab === 'forex' && <Forex />}
         </div>
         </div>
     )
