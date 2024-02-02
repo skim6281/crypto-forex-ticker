@@ -6,5 +6,7 @@ Use `npm run dev` to run locally.
 
 ## TODO
 
-- Refactor. Avoid dup code in Crypto and Forex components.
-- Update styling.
+- Refactor:
+  - [] Remove dup code in Crypto and Forex components. Probably use a hook.
+  - [] Implement a custom Table componenent
+- [] Update styling.
