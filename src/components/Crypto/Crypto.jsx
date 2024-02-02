@@ -1,6 +1,7 @@
 import styles from './Crypto.module.scss';
 import useWebSocket, {ReadyState} from 'react-use-websocket';
 import { useEffect, useState } from 'react';
+import { Table } from '@radix-ui/themes';
 
 const BTC_SYM = "BTC-USD";
 const ETH_SYM = "ETH-USD";
@@ -13,32 +14,29 @@ function Crypto() {
         onError: (e) => console.error(e),
     });
 
+    const updateState = (msg) => (prev) => {
+        const newState = [...prev];
+        if(newState.length === 20) {
+            newState.pop();
+        }
+        newState.unshift(msg);
+        return newState;
+    }
+
     useEffect(() => {
         if(lastJsonMessage !== null) {
-            // console.log(lastJsonMessage);
             if(lastJsonMessage?.length > 0) {
                 for(let i = 0; i < lastJsonMessage.length; i++) {
                     const msg = lastJsonMessage[i];
                     if(msg?.pair === BTC_SYM) {
-                        setBTC((prev) => {
-                                if(prev.length === 20) {
-                                prev.shift();
-                            }
-                            return prev.concat(msg);
-                        })
+                        setBTC(updateState(msg));
                     } else if(msg?.pair === ETH_SYM) {
-                        setETH((prev) => {
-                                if(prev.length === 20) {
-                                prev.shift();
-                            }
-                            return prev.concat(msg);
-                        })
+                        setETH(updateState(msg));
                     }
                 }
             }
-        
         }
-    }, [lastJsonMessage])
+    }, [lastJsonMessage]);
 
     useEffect(() => {
         if(readyState === ReadyState.OPEN) {
@@ -52,12 +50,65 @@ function Crypto() {
             })
         }
     }, [readyState]);
-
-    console.log('btc', btc);
-    console.log('eth', eth);
     
-    return <div>
-        CRYPTO
+    return <div className={styles.container}>
+        <div className={styles.tableContainer}>
+            <Table.Root>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.ColumnHeaderCell>Pair</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell>Open Price</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell>Close Price</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell>High</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell>Low</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell>Vol. Weighted Avg Price</Table.ColumnHeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {
+                        btc?.map((coin, idx) => {
+                            return <Table.Row key={idx}>
+                                <Table.RowHeaderCell>{coin.pair}</Table.RowHeaderCell>
+                                <Table.RowHeaderCell>{coin.o}</Table.RowHeaderCell>
+                                <Table.RowHeaderCell>{coin.c}</Table.RowHeaderCell>
+                                <Table.RowHeaderCell>{coin.h}</Table.RowHeaderCell>
+                                <Table.RowHeaderCell>{coin.l}</Table.RowHeaderCell>
+                                <Table.RowHeaderCell>{coin.vw}</Table.RowHeaderCell>
+                            </Table.Row>
+                        })
+                    }
+                </Table.Body>
+            </Table.Root>
+        </div>
+        <div className={styles.tableContainer}>
+        <Table.Root>
+            <Table.Header>
+                <Table.Row>
+                    <Table.ColumnHeaderCell>Pair</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>Open Price</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>Close Price</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>High</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>Low</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>Vol. Weighted Avg Price</Table.ColumnHeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {
+                    eth?.map((coin, idx) => {
+                        return <Table.Row key={idx}>
+                            <Table.RowHeaderCell>{coin.pair}</Table.RowHeaderCell>
+                            <Table.RowHeaderCell>{coin.o}</Table.RowHeaderCell>
+                            <Table.RowHeaderCell>{coin.c}</Table.RowHeaderCell>
+                            <Table.RowHeaderCell>{coin.h}</Table.RowHeaderCell>
+                            <Table.RowHeaderCell>{coin.l}</Table.RowHeaderCell>
+                            <Table.RowHeaderCell>{coin.vw}</Table.RowHeaderCell>
+                        </Table.Row>
+                    })
+                }
+            </Table.Body>
+        </Table.Root>
+
+        </div>
     </div>
 }
 
